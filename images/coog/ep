@@ -35,6 +35,23 @@ conf_database() {
     return 0
 }
 
+read_conf_file_uwsgi(){
+
+  input="./uwsgi.conf"
+
+  while IFS= read -r line
+  do
+    arg1=${line%% *}
+    arg2=${line##* }
+    
+    [ ! -z "$arg1" ] && [ $arg1 == "plugins" ] && plugings=$arg2 
+    [ ! -z "$arg1" ] && [ $arg1 == "modules" ] && mod=$arg2 
+    [ ! -z "$arg1" ] && [ $arg1 == "http-socket" ] && socket=$arg2
+  
+  done < "$input"
+
+}
+
 conf_cache() {
     echo "[cache]"
     [ ! -z "$COOG_CACHE_MODEL" ] && echo "model = $COOG_CACHE_MODEL"
@@ -216,11 +233,12 @@ _server() {
     export WSGI_LOG_FILE
     COOG_IWC=1
     export COOG_IWC
+    read_conf_file_uwsgi
     uwsgi -T \
-        --plugins python3 \
-        --module trytond.application:app \
+        --plugins "$plugings" \
+        --module "$mod" \
         --logformat "$format" \
-        --http-socket :8000 \
+        --http-socket "$socket" \
         --harakiri "$COOG_TIMEOUT" \
         --processes "$n"
 }
