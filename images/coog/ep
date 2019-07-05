@@ -31,7 +31,8 @@ conf_database() {
     [ ! -z "$COOG_DB_LANG" ] && echo "language = $COOG_DB_LANG"
     [ -z "$COOG_DB_USER" ] && echo "missing DB user" && return 1
     [ -z "$COOG_DB_PASSWORD" ] && echo "missing DB password" && return 1
-    echo "uri = postgresql://$COOG_DB_USER:$COOG_DB_PASSWORD@$COOG_POSTGRES_HOST:$COOG_POSTGRES_PORT"
+    #echo "uri = postgresql://$COOG_DB_USER:$COOG_DB_PASSWORD@$COOG_POSTGRES_HOST:$COOG_POSTGRES_PORT"
+    echo "uri = sqlite/:memory:"
     return 0
 }
 
